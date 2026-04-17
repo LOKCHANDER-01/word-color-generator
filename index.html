@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Word to Colors</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <section class="hero">
+        <h1>🎨 Word to Color Generator</h1>
+        <p>Discover colors inspired by words</p>
+    </section>
+    <section class="search-section">
+        <div class="search-box">
+            <input 
+                type="text" 
+                id="wordInput" 
+                placeholder="Search your favourite colour here..."
+                onkeypress="handleEnter(event)"
+            />
+            <button onclick="getColors()">Generate</button>
+        </div>
+    </section>
+    <div id="loader" class="loader hidden"></div>
+    <section class="result-section">
+        <h2>Generated Colors</h2>
+        <div id="colorGrid"></div>
+    </section>
+    <script>
+        function handleEnter(event) {
+            if (event.key === "Enter") {
+                getColors();
+            }
+        }
+        function getColors() {
+            const word = document.getElementById("wordInput").value;
+            const grid = document.getElementById("colorGrid");
+            const loader = document.getElementById("loader");
+            if (!word.trim()) return;
+            grid.innerHTML = "";
+            loader.classList.remove("hidden");
+            fetch(`/colors?word=${word}`)
+                .then(res => res.json())
+                .then(colors => {
+                    loader.classList.add("hidden");
+                    colors.forEach(color => {
+                        const card = document.createElement("div");
+                        card.className = "card";
+                        card.style.background = color;
+                        card.innerText = color;
+                        grid.appendChild(card);
+                    });
+                });
+        }
+    </script>
+</body>
+</html>
